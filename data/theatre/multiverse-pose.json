@@ -1,0 +1,23 @@
+{
+  "camera": {
+    "x": 12,
+    "y": 26,
+    "z": 168,
+    "fov": 44
+  },
+  "target": {
+    "x": -14,
+    "y": 2,
+    "z": 0
+  },
+  "world": {
+    "exposure": 1,
+    "filamentEnergy": 1.05,
+    "particleSpeed": 0.8,
+    "bloomStrength": 0.95,
+    "instability": 0.04,
+    "branchDensity": 1,
+    "fabric": 0.6,
+    "title": 1
+  }
+}

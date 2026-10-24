@@ -1,0 +1,22 @@
+{
+  "camera": {
+    "x": 0,
+    "y": 0.55,
+    "z": 7.6,
+    "fov": 34
+  },
+  "artifact": {
+    "scale": 1,
+    "distortion": 0.32,
+    "pulse": 0,
+    "hue": 0,
+    "spin": 0.08
+  },
+  "orbitals": {
+    "tilt": 0.38,
+    "spread": 1
+  },
+  "light": {
+    "intensity": 1
+  }
+}

@@ -1,0 +1,307 @@
+/* Base styles: document defaults, focus, art rendering, motion guards. */
+
+/* Android's monospace font has no box or block characters; this 3 KB face
+   (served by ascii.rest, copied locally) covers only those code points. */
+@font-face {
+  font-family: "ascii.rest mono";
+  src: url("/fonts/ascii-rest-mono.woff2") format("woff2");
+  unicode-range: U+00B0, U+00B7, U+2022, U+2500-259F, U+25CF;
+  font-display: swap;
+}
+
+@layer base {
+  html {
+    color-scheme: dark;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-sans-stack);
+    font-size: 100%;
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+    scroll-padding-top: calc(var(--header-h) + 1rem);
+    overflow-x: clip;
+  }
+
+  body {
+    min-height: 100dvh;
+    font-size: var(--text-body);
+    line-height: var(--text-body--line-height);
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: clip;
+  }
+
+  ::selection {
+    background: var(--sage);
+    color: var(--tva-obsidian);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 3px;
+    border-radius: var(--radius-xs);
+  }
+
+  button,
+  input,
+  select,
+  textarea {
+    font: inherit;
+    color: inherit;
+  }
+
+  svg {
+    display: block;
+  }
+}
+
+@layer components {
+  /* Numbers in data columns line up. */
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Administrative microtype: mono, uppercase, tracked. */
+  .meta-label {
+    font-family: var(--font-mono-stack);
+    font-size: var(--text-micro);
+    line-height: var(--text-micro--line-height);
+    letter-spacing: var(--text-micro--letter-spacing);
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  /* ascii.rest output. Rows must not inherit the page's leading or tracking. */
+  .art {
+    margin: 0;
+    font-family: var(--font-art-stack);
+    font-size: var(--art-size, 12px);
+    line-height: 1.2;
+    letter-spacing: 0;
+    white-space: pre;
+    font-variant-ligatures: none;
+    font-feature-settings: "liga" 0, "calt" 0;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* A canvas piece: block, full width of its box, height from its shape. */
+  canvas.art {
+    display: block;
+    max-width: 100%;
+  }
+}
+
+/* Motion guards. GSAP checks the same query; this covers CSS transitions. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* The notched frame (components/ui/frame.tsx): corner marks drawn with
+   gradients so the rule stays one element and the marks scale with nothing. */
+@layer components {
+  .frame::before {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    pointer-events: none;
+    border-radius: inherit;
+    background:
+      linear-gradient(var(--fg-muted), var(--fg-muted)) 0 0 / 10px 1px no-repeat,
+      linear-gradient(var(--fg-muted), var(--fg-muted)) 0 0 / 1px 10px no-repeat,
+      linear-gradient(var(--fg-muted), var(--fg-muted)) 100% 0 / 10px 1px no-repeat,
+      linear-gradient(var(--fg-muted), var(--fg-muted)) 100% 0 / 1px 10px no-repeat,
+      linear-gradient(var(--fg-muted), var(--fg-muted)) 0 100% / 10px 1px no-repeat,
+      linear-gradient(var(--fg-muted), var(--fg-muted)) 0 100% / 1px 10px no-repeat,
+      linear-gradient(var(--fg-muted), var(--fg-muted)) 100% 100% / 10px 1px no-repeat,
+      linear-gradient(var(--fg-muted), var(--fg-muted)) 100% 100% / 1px 10px no-repeat;
+  }
+
+  /* A stamp prints in one step, like a rubber stamp, then stays. */
+  .frame-stamp {
+    animation: frame-stamp var(--dur-base) var(--ease-anomaly) both;
+  }
+  @keyframes frame-stamp {
+    from {
+      opacity: 0;
+      transform: translateY(2px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
+
+/* A sheet of Archive Paper: the same tokens, re-mapped, so every component
+   inside inverts by itself (ink becomes obsidian, rules become olive, temporal
+   matter prints in deep green). Orange only prints burnt (#8a4605) where it
+   must be read; fills keep the exact orange with obsidian text. See docs/THEMING.md. */
+@layer components {
+  .surface-paper {
+    --bg: var(--tva-paper);
+    --bg-deep: #cdc7b8;
+    --surface-1: #d0cabb;
+    --surface-2: #c8c2b3;
+    --surface-3: #bfb9aa;
+    --fg-strong: var(--tva-obsidian);
+    --fg: var(--tva-obsidian);
+    --fg-muted: #524b3e; /* 4.8 on the darker paper surfaces, 5.7 on paper */
+    --fg-subtle: #524b3e;
+    --on-sage: var(--tva-obsidian);
+    --on-accent: var(--tva-obsidian);
+    --line: #bfb8a8;
+    --line-strong: var(--tva-olive); /* 4.1 on paper */
+    --line-input: #524b3e;
+    --accent: var(--tva-orange);
+    --accent-fill: var(--tva-orange);
+    --accent-text: #8a4605; /* 4.75 on paper */
+    --temporal: var(--tva-green); /* 5.4 on paper */
+    --temporal-text: var(--tva-green);
+    --focus: var(--tva-obsidian);
+    --ok: var(--tva-green);
+    --warn: var(--tva-olive);
+    --danger: #8a4605;
+    --info: var(--tva-obsidian);
+    color-scheme: light;
+  }
+
+  /* A deep green plate: the immersive surfaces (the anomaly field, the branch
+     survey). Warm text, paper for the quieter lines; teal and orange lighten
+     so they still read against the green. */
+  .surface-green {
+    --bg: var(--tva-green);
+    --bg-deep: #1f4740;
+    --surface-1: #30635a;
+    --surface-2: #376d63;
+    --surface-3: #3f766c;
+    --fg-strong: var(--tva-warm);
+    --fg: var(--tva-warm); /* 6.8 */
+    --fg-muted: var(--tva-paper); /* 5.4 */
+    --fg-subtle: #bfcabb; /* 4.75 */
+    --on-accent: var(--tva-obsidian);
+    --line: #3a6a60;
+    --line-strong: #4f8275;
+    --line-input: #bfcabb;
+    --accent: #e8863a; /* 3.0: markers and rules */
+    --accent-fill: var(--tva-orange);
+    --accent-text: #f6b885; /* 4.65 */
+    --temporal: #b4d0c5; /* 4.9 */
+    --temporal-text: #b4d0c5;
+    --focus: var(--tva-warm);
+    --ok: #b4d0c5;
+    --warn: var(--tva-paper);
+    --danger: #f6b885;
+    --info: var(--tva-warm);
+  }
+
+  /* Misregistration: a third ink slips out from under the title during a
+     variance event and snaps back when the desk registers it. Mechanical
+     steps, never a glide. */
+  .hero-ghost {
+    opacity: 0;
+    transform: translate(0, 0);
+    transition:
+      opacity var(--dur-fast) var(--ease-anomaly),
+      transform var(--dur-fast) var(--ease-anomaly);
+  }
+  [data-variance="true"] .hero-ghost {
+    opacity: 1;
+    transform: translate(3px, -2px);
+  }
+}
+
+/* Entrance choreography: on a scripted page that allows motion, the hero
+   starts hidden and GSAP brings it in (fromTo). Without JavaScript, or with
+   reduced motion, none of this applies and the hero is simply there. */
+@media (prefers-reduced-motion: no-preference) {
+  .js .hero-pending .hero-line-inner {
+    transform: translateY(110%);
+  }
+  .js .hero-pending .hero-window,
+  .js .hero-pending .hero-meta,
+  .js .hero-pending .hero-station,
+  .js .hero-pending .tl-figure {
+    opacity: 0;
+    visibility: hidden;
+  }
+  /* If the bundle never runs (blocked script, failed chunk), the sheet releases itself after 2.5 s.
+     The choreography drops `hero-pending` on its first tick, so this never competes with GSAP; and it
+     outranks the motion switch's paused state below, or a paused page could stay blank. */
+  .js .hero-pending .hero-line-inner,
+  .js .hero-pending .hero-window,
+  .js .hero-pending .hero-meta,
+  .js .hero-pending .hero-station,
+  .js .hero-pending .tl-figure {
+    animation: hero-release 0s linear 2.5s forwards;
+    animation-play-state: running !important;
+  }
+  @keyframes hero-release {
+    to {
+      transform: none;
+      opacity: 1;
+      visibility: visible;
+    }
+  }
+}
+
+/* The reader's motion switch (header): continuous CSS animations stop; the
+   ascii pieces hold a still frame and the choreographies skip to their end. */
+html[data-motion="paused"] *,
+html[data-motion="paused"] *::before,
+html[data-motion="paused"] *::after {
+  animation-play-state: paused !important;
+}
+
+/* The boot slip is in the server HTML for everyone (no flash for first-time
+   visitors); the inline script in app/layout.tsx marks the document before
+   first paint when it must not show (seen this session, reduced motion,
+   motion switched off), and React removes it on hydration. */
+html[data-boot="skip"] .boot {
+  display: none;
+}
+
+/* The scroll cue's tick: a rule that fills and drains, once every two seconds. Stilled with everything else by the motion guard. */
+@media (prefers-reduced-motion: no-preference) {
+  .scroll-cue-tick {
+    animation: scroll-cue 2.2s var(--ease-settle) infinite;
+  }
+  @keyframes scroll-cue {
+    0% {
+      transform: scaleY(0);
+      transform-origin: top;
+    }
+    45% {
+      transform: scaleY(1);
+      transform-origin: top;
+    }
+    55% {
+      transform: scaleY(1);
+      transform-origin: bottom;
+    }
+    100% {
+      transform: scaleY(0);
+      transform-origin: bottom;
+    }
+  }
+}
+
+/* A canvas arriving over its plate fades in, so the hand-over is a dissolve, not a cut. */
+@media (prefers-reduced-motion: no-preference) {
+  .scene-enter {
+    animation: scene-enter 0.9s var(--ease-settle) both;
+  }
+  @keyframes scene-enter {
+    from {
+      opacity: 0;
+    }
+  }
+}
